@@ -31,7 +31,7 @@ def add_new_user():
     username = ttk.Entry(add_new_user_screen, font=("arial","12"))
     username.place(x=110,y=0)
 
-    Label(add_new_user_screen, text="PASSWORD",font=("arial","12")).place(x=0,y=30)
+    Label(add_new_user_screen, text="PASSWORD:",font=("arial","12")).place(x=0,y=30)
     password = ttk.Entry(add_new_user_screen, font=("arial","12"))
     password.place(x=110,y=30)   
 
@@ -91,16 +91,16 @@ def add_product():
 
 
 def print_bill(email,cust_name,bill_no):
-    
+
     cursor.execute("select sum(amount) from bills_data where bill_no={}".format(bill_no))
     data = cursor.fetchall()
     for amt in data:
         total = amt
-    print(amt)
+    
 
     cursor.execute("select * from bills_data where bill_no={}".format(bill_no))
     data1 = cursor.fetchall()
-    print(data1)
+
 
 
     print_bill_window = Tk()
@@ -113,10 +113,19 @@ def print_bill(email,cust_name,bill_no):
     x = 300
     y = 90
     for i in data1:
-        bill_no,prod_no,prod_name,quantity,price,amount=i
+        bill_no,prod_no,prod_name,price,quantity,amount=i
         canvas.create_text(x,y,font=("arial","10"), text="                                    {}                                                       {}                                               {}                                               {} ".format(prod_name,quantity,price,amount))
         y=y+20
-            
+
+        #updating stock
+        cursor.execute("select quantity from stock where prod_no={}".format(prod_no))
+        quan = cursor.fetchall()
+
+        for i in quan:
+            cursor.execute("update stock set quantity ={} where prod_no={}".format(i[0]-quantity,prod_no))
+            mycon.commit()
+    
+    
 
     canvas.create_text(300,y,text="---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------")
     canvas.create_text(300,y+20,font=("arial","12"), text="SEE YOU SOON {} !!!".format(cust_name))
@@ -124,7 +133,7 @@ def print_bill(email,cust_name,bill_no):
     canvas.pack()
     print_bill_window.mainloop()
 
-    
+       
 
 
 def add_to_bill(bill_no,date_today,add_product_by,product,prod_quantity,treeview_bill):
@@ -139,7 +148,7 @@ def add_to_bill(bill_no,date_today,add_product_by,product,prod_quantity,treeview
     
     for prod_no,prod_name,price in data:
         amount = price*int(prod_quantity)
-        i = (prod_no,prod_name,price,prod_quantity,amount)
+        i = (prod_no,prod_name,prod_quantity,price,amount)
         cursor.execute("insert into bills_data values({},{},'{}',{},{},{})".format(bill_no,prod_no,prod_name,price,prod_quantity,amount))
         mycon.commit()
 
@@ -321,12 +330,13 @@ def search():
    
 
 def view_stock():
-    view_stock_screen = Tk()
+    view_stock_screen = Toplevel()
     view_stock_screen.geometry("850x300")
 
-    
-    
-    
+
+    bg = PhotoImage(file="images/background.png")
+    bg1 = Label(view_stock_screen, image=bg).pack()
+    bg1.img= bg
 
 
     cursor.execute("select * from stock")
@@ -390,6 +400,7 @@ def authentication():
         main_screen = Tk()
         main_screen.geometry("1200x900")
 
+
         background_img = PhotoImage(file="images/background.png")
         background = Label(main_screen,image=background_img)
         background.pack()
@@ -398,13 +409,37 @@ def authentication():
         
         Label(main_screen, text="DASHBOARD", font=("algerian","45","underline ")).place(x=440,y=20)
         
+        #images 
+        view_stock_img = PhotoImage(file="images/view_stock.png")
+        add_product_img = PhotoImage(file="images/add_product.png")
+        delete_img = PhotoImage(file="images/delete.png")
+        search_img = PhotoImage(file="images/search.png")
+        generate_bill_img = PhotoImage(file="images/generate_bill.png")
+        add_user_img = PhotoImage(file="images/add_user.png")
 
-        Button(main_screen, text="VIEW STOCK", font=("arial","25"), width=20, command=view_stock).place(x=120,y=150)
-        Button(main_screen,text="ADD PRODUCT", font=("arial","25"), width=20,  command=add_product).place(x=700,y=150)
-        Button(main_screen, text="DELETE PRODUCT", font=("arial","25"), width=20, command=delete_product).place(x=120,y=300)    
-        Button(main_screen, text="SEARCH", font=("arial","25"), width=20,  command=search).place(x=700,y=300)
-        Button(main_screen, text="GENERATE BILL", font=("arial","25"), width=20, command=bill).place(x=120,y=450)
-        Button(main_screen, text="ADD NEW USER", font=("arial","25"), width=20, command=add_new_user).place(x=700,y=450)
+        button1 = Button(main_screen, text="VIEW STOCK", font=("arial","25"), image=view_stock_img, compound="right", width=400, command=view_stock)
+        button1.place(x=120,y=150)
+        button1.image=view_stock_img
+    
+        button2 = Button(main_screen,text="ADD PRODUCT", font=("arial","25"), image=add_product_img, compound="right", width=400, command=add_product)
+        button2.place(x=700,y=150)
+        button2.img = add_product_img
+
+        button3 = Button(main_screen, text="DELETE PRODUCT", font=("arial","25"), image=delete_img, compound="right", width=400, command=delete_product)
+        button3.place(x=120,y=300)    
+        button3.image = delete_img
+
+        button4 = Button(main_screen, text="SEARCH  ", font=("arial","25"), image=search_img, compound="right", width=400, command=search)
+        button4.place(x=700,y=300)
+        button4.image=search_img
+
+        button5 = Button(main_screen, text="GENERATE BILL", font=("arial","25"), image=generate_bill_img, compound="right", width=400, command=bill)
+        button5.place(x=120,y=450)
+        button5.image = generate_bill_img
+
+        button6 = Button(main_screen, text="ADD NEW USER", font=("arial","25"), image=add_user_img, compound="right", width=400, command=add_new_user)
+        button6.place(x=700,y=450)
+        button6.image = add_user_img
 
 
     else:
