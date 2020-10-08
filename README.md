@@ -3,7 +3,6 @@
 DATABASE NAME = project
 NAMES OF SQL TABLES AND THEIR STRUCTURES 
 
-
 INVENTORY
 +-----------+-------------+------+-----+---------+-------+
 | Field     | Type        | Null | Key | Default | Extra |
