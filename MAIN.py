@@ -24,31 +24,37 @@ def insert_user(username,password):
 
 
 def add_new_user():
-    add_new_user_screen = Tk()
-    add_new_user_screen.geometry("300x100")
+    add_new_user_screen = Toplevel()
+    add_new_user_screen.geometry("340x110")
 
-    Label(add_new_user_screen, text="USERNAME:", font=("arial","12")).place(x=0,y=0)
+
+    bg = PhotoImage(file="images/background2.png")
+    bg1 = Label(add_new_user_screen, image=bg)
+    bg1.pack()
+    bg1.img= bg
+
+    Label(add_new_user_screen, text="USERNAME:", font=("arial","12"), bg="cyan").place(x=10,y=10)
     username = ttk.Entry(add_new_user_screen, font=("arial","12"))
-    username.place(x=110,y=0)
+    username.place(x=120,y=10)
 
-    Label(add_new_user_screen, text="PASSWORD:",font=("arial","12")).place(x=0,y=30)
+    Label(add_new_user_screen, text="PASSWORD:",font=("arial","12"), bg="cyan").place(x=10,y=40)
     password = ttk.Entry(add_new_user_screen, font=("arial","12"))
-    password.place(x=110,y=30)   
+    password.place(x=120,y=40)   
 
-    Button(add_new_user_screen, text="ADD", font=("arial","12"), command= lambda: insert_user(username.get(),password.get())).place(x=240,y=60) 
-
-
+    Button(add_new_user_screen, text="ADD", font=("arial","12"), command= lambda: insert_user(username.get(),password.get())).place(x=280,y=75) 
 
 
 
 
 
 
-def insert_into_stock(prod_no,prod_name,quantity,price,category,shelf):
+
+
+def insert_into_inventory(prod_no,prod_name,quantity,price,category,shelf):
     prod_no = int(prod_no)
     price = int(price)
     quantity = int(quantity)
-    cursor.execute("insert into stock values({},'{}',{},{},'{}','{}')".format(prod_no,prod_name,quantity,price,category,shelf))
+    cursor.execute("insert into inventory values({},'{}',{},{},'{}','{}')".format(prod_no,prod_name,quantity,price,category,shelf))
     mycon.commit()
 
     confirm = Tk()
@@ -57,35 +63,41 @@ def insert_into_stock(prod_no,prod_name,quantity,price,category,shelf):
 
 
 def add_product():
-    add_product_screen = Tk()
+    add_product_screen = Toplevel()
     add_product_screen.geometry("400x280")
 
-    Label(add_product_screen, text='PRODUCT NO :', font=("arial","12")).place(x=0,y=0)
+    bg = PhotoImage(file="images/background2.png")
+    bg1 = Label(add_product_screen, image=bg)
+    bg1.pack()
+    bg1.img= bg
+
+
+    Label(add_product_screen, text='PRODUCT NO :', font=("arial","12"), bg="cyan").place(x=0,y=10)
     prod_no = ttk.Entry(add_product_screen, font=("arial","12"))
-    prod_no.place(x=140,y=0)
+    prod_no.place(x=140,y=10)
 
 
-    Label(add_product_screen, text="PRODUCT NAME :", font=("arial","12")).place(x=0,y=30)
+    Label(add_product_screen, text="PRODUCT NAME :", font=("arial","12"), bg="cyan").place(x=0,y=40)
     prod_name = ttk.Entry(add_product_screen, font=("arial","12"))
-    prod_name.place(x=140,y=30)
+    prod_name.place(x=140,y=40)
 
-    Label(add_product_screen, text="QUANTITY : ", font=("arial","12")).place(x=0,y=60)
+    Label(add_product_screen, text="QUANTITY : ", font=("arial","12"), bg="cyan").place(x=0,y=70)
     quantity = ttk.Entry(add_product_screen, font=("arial","12"))
-    quantity.place(x=140,y=60)
+    quantity.place(x=140,y=70)
 
-    Label(add_product_screen, text="PRICE : ", font=("arial","12")).place(x=0,y=90)
+    Label(add_product_screen, text="PRICE : ", font=("arial","12"), bg="cyan").place(x=0,y=100)
     price = ttk.Entry(add_product_screen, font=("ariial","12"))
-    price.place(x=140,y=90)
+    price.place(x=140,y=100)
 
-    Label(add_product_screen, text="CATEGORY", font=("arial,","12")).place(x=0,y=120)
+    Label(add_product_screen, text="CATEGORY", font=("arial,","12"), bg="cyan").place(x=0,y=130)
     category = ttk.Entry(add_product_screen, font=("arial","12"))
-    category.place(x=140,y=120)
+    category.place(x=140,y=130)
 
-    Label(add_product_screen, text="SHELF : ", font=("arial","12")).place(x=0,y=150)
+    Label(add_product_screen, text="SHELF : ", font=("arial","12"), bg="cyan").place(x=0,y=160)
     shelf = ttk.Entry(add_product_screen, font=("arial","12"))
-    shelf.place(x=140,y=150)
+    shelf.place(x=140,y=160)
 
-    Button(add_product_screen, text="ADD PRODUCT", font=("arial","15"), command= lambda: insert_into_stock(prod_no.get(),prod_name.get(),quantity.get(),price.get(),category.get(),shelf.get())).place(x=230,y=220)
+    Button(add_product_screen, text="ADD PRODUCT", font=("arial","15"), command= lambda: insert_into_inventory(prod_no.get(),prod_name.get(),quantity.get(),price.get(),category.get(),shelf.get())).place(x=230,y=220)
 
 
 
@@ -117,12 +129,12 @@ def print_bill(email,cust_name,bill_no):
         canvas.create_text(x,y,font=("arial","10"), text="                                    {}                                                       {}                                               {}                                               {} ".format(prod_name,quantity,price,amount))
         y=y+20
 
-        #updating stock
-        cursor.execute("select quantity from stock where prod_no={}".format(prod_no))
+        #updating inventory
+        cursor.execute("select quantity from inventory where prod_no={}".format(prod_no))
         quan = cursor.fetchall()
 
         for i in quan:
-            cursor.execute("update stock set quantity ={} where prod_no={}".format(i[0]-quantity,prod_no))
+            cursor.execute("update inventory set quantity ={} where prod_no={}".format(i[0]-quantity,prod_no))
             mycon.commit()
     
     
@@ -139,10 +151,10 @@ def print_bill(email,cust_name,bill_no):
 def add_to_bill(bill_no,date_today,add_product_by,product,prod_quantity,treeview_bill):
 
     if add_product_by == 0:
-        cursor.execute("select prod_no,prod_name,price from stock where prod_no={}".format(product))
+        cursor.execute("select prod_no,prod_name,price from inventory where prod_no={}".format(product))
     
     elif add_product_by == 1:
-        cursor.execute("select prod_no,prod_name,price from stock where prod_name='{}'".format(product))
+        cursor.execute("select prod_no,prod_name,price from inventory where prod_name='{}'".format(product))
     
     data = cursor.fetchall()
     
@@ -162,12 +174,13 @@ def add_to_bill(bill_no,date_today,add_product_by,product,prod_quantity,treeview
 
 
 def bill():
-    bill_screen = Tk()
+    bill_screen = Toplevel()
     bill_screen.geometry("1100x530")
 
-
-   
-
+    bg2 = PhotoImage(file="images/background2.png")
+    bg3 = Label(bill_screen, image=bg2)
+    bg3.pack()
+    bg3.image = bg2
 
 
     #bill number 
@@ -175,38 +188,38 @@ def bill():
     data =  cursor.fetchone()
     bill_no = data[0]+1
 
-    Label(bill_screen, text="BILL NO : {}".format(bill_no), font=("arial","15")).place(x=15,y=15)
+    Label(bill_screen, text="BILL NO : {}".format(bill_no), font=("arial","15"), bg='cyan').place(x=15,y=15)
 
     #  date 
     date_today = date.today()
-    Label(bill_screen,text="DATE : {}".format(date_today), font=("arial","15")).place(x=900,y=15)
+    Label(bill_screen,text="DATE : {}".format(date_today), font=("arial","15"), bg="cyan").place(x=900,y=15)
 
     #name 
-    Label(bill_screen, text="NAME : ", font=("arial","15")).place(x=15,y=55)
+    Label(bill_screen, text="NAME : ", font=("arial","15"), bg="cyan").place(x=15,y=55)
     cust_name = ttk.Entry(bill_screen,font=("arial","15"), width=25)
     cust_name.place(x=100,y=55)
 
 
     #email
-    Label(bill_screen, text="E-mail : ", font=("arial",15)).place(x=620,y=55)
+    Label(bill_screen, text="E-mail : ", font=("arial",15), bg="cyan").place(x=620,y=55)
     email = ttk.Entry(bill_screen, font=("arial","15"), width=35)
     email.place(x=700,y=55)
 
 
     #add product by 
-    Label(bill_screen, text="ADD PRODUCT BY : ", font=("arial","15")).place(x=15,y=100)    
+    Label(bill_screen, text="ADD PRODUCT BY : ", font=("arial","15"), bg="cyan").place(x=15,y=100)    
     add_product_by = ttk.Combobox(bill_screen, values=["PRODUCT NO","PRODUCT NAME"], font=("arial","15"))
-    add_product_by.place(x=210,y=100)
+    add_product_by.place(x=225,y=100)
 
 
     #product
     product = ttk.Entry(bill_screen, font=("arial","15"))
-    product.place(x=460,y=100)
+    product.place(x=475,y=100)
 
     #product quantity
-    Label(bill_screen, text="QUANTITY : ", font=("arial","15")).place(x=710,y=100)
+    Label(bill_screen, text="QUANTITY : ", font=("arial","15"), bg="cyan").place(x=710,y=100)
     prod_quantity = ttk.Entry(bill_screen, font=("arial","15"), width=10)
-    prod_quantity.place(x=820,y=100)
+    prod_quantity.place(x=835,y=100)
 
 
 
@@ -236,7 +249,7 @@ def bill():
     
 
 
-    Button(bill_screen, text="ADD", font=("arial","15"), command= lambda: add_to_bill(bill_no,date_today,add_product_by.current(),product.get(),prod_quantity.get(),treeview_bill)).place(x=970,y=100)
+    Button(bill_screen, text="ADD", font=("arial","15"), command= lambda: add_to_bill(bill_no,date_today,add_product_by.current(),product.get(),prod_quantity.get(),treeview_bill)).place(x=985,y=100)
     Button(bill_screen, text="PRINT BILL", font=("arial","15"),command= lambda: print_bill(email.get(),cust_name.get(),bill_no)).place(x=960,y=460)
    
 
@@ -247,10 +260,10 @@ def bill():
 def delete(delete_by,del_info):
 
     if delete_by == 0:
-        cursor.execute("delete * from stock where prod_no='{}';".format(del_info))
+        cursor.execute("delete * from inventory where prod_no='{}';".format(del_info))
     
     elif delete_by == 1:
-        cursor.execute("delete from stock where prod_name='{}';".format(del_info))
+        cursor.execute("delete from inventory where prod_name='{}';".format(del_info))
 
     mycon.commit()
     confirm_screen = Tk()
@@ -261,10 +274,15 @@ def delete(delete_by,del_info):
 
 
 def delete_product():
-    delete_product_screen = Tk()
+    delete_product_screen = Toplevel()
     delete_product_screen.geometry("400x80")
 
-    Label(delete_product_screen, text="DELETE BY :", font=("arial","12")).place(x=0,y=0)
+    bg = PhotoImage(file="images/background2.png")
+    bg1 = Label(delete_product_screen, image=bg)
+    bg1.pack()
+    bg1.img= bg
+
+    Label(delete_product_screen, text="DELETE BY :", font=("arial","12"), bg="cyan").place(x=0,y=0)
 
     
     delete_by =  ttk.Combobox(delete_product_screen, values=["PRODUCT NO","PRODUCT NAME"])
@@ -283,13 +301,13 @@ def delete_product():
 def get_results(search_by,search_for):
 
     if search_by == 0:
-        cursor.execute("select * from stock where prod_no='{}';".format(search_for))
+        cursor.execute("select * from inventory where prod_no='{}';".format(search_for))
 
     elif search_by == 1:
-        cursor.execute("select * from stock where prod_name='{}';".format(search_for))
+        cursor.execute("select * from inventory where prod_name='{}';".format(search_for))
 
     elif search_by == 2:
-        cursor.execute("select * from stock where category='{}';".format(search_for))
+        cursor.execute("select * from inventory where category='{}';".format(search_for))
 
     data = cursor.fetchall()
     
@@ -316,10 +334,15 @@ def get_results(search_by,search_for):
 
     
 def search():
-    search_screen = Tk()
+    search_screen = Toplevel()
     search_screen.geometry("500x200")
 
-    Label(search_screen, text="SEARCH BY", font=("arial","15")).place(x=10,y=20)
+    bg = PhotoImage(file="images/background2.png")
+    bg1 = Label(search_screen, image=bg)
+    bg1.pack()
+    bg1.img= bg
+
+    Label(search_screen, text="SEARCH BY", font=("arial","15"), bg="cyan").place(x=10,y=20)
 
     search_by = ttk.Combobox(search_screen, values=["product no","product name","category"])
     search_by.place(x=140,y=20)
@@ -329,24 +352,29 @@ def search():
     
    
 
-def view_stock():
-    view_stock_screen = Toplevel()
-    view_stock_screen.geometry("850x300")
+def view_inventory():
+    view_inventory_screen = Toplevel()
+    view_inventory_screen.geometry("850x350")
 
 
-    bg = PhotoImage(file="images/background.png")
-    bg1 = Label(view_stock_screen, image=bg).pack()
+
+    bg = PhotoImage(file="images/background2.png")
+    bg1 = Label(view_inventory_screen, image=bg)
+    bg1.pack()
     bg1.img= bg
 
 
-    cursor.execute("select * from stock")
+    Label(view_inventory_screen, text="INVENTORY", font=("algerian","38","underline"),bg="cyan", fg="black").place(x=350,y=15)
+
+
+    cursor.execute("select * from inventory")
     data = cursor.fetchall()
     
     
-    treeview = ttk.Treeview(view_stock_screen)
+    treeview = ttk.Treeview(view_inventory_screen)
     treeview["columns"] = ("1","2","3","4","5","6")
     treeview["show"] = ("headings")
-    treeview.place(x=20,y=20)
+    treeview.place(x=20,y=100)
 
     #headings 
     treeview.heading("1", text="PRODUCT NO")
@@ -367,7 +395,7 @@ def view_stock():
 
 
     #adding a scrollbar 
-    scrollbar = Scrollbar(view_stock_screen)
+    scrollbar = Scrollbar(view_inventory_screen)
     scrollbar.pack(side="right", fill="y")
     treeview.config(yscrollcommand = scrollbar.set)
     scrollbar.config(command=treeview.yview)
@@ -407,19 +435,19 @@ def authentication():
         background.image = background_img
 
         
-        Label(main_screen, text="DASHBOARD", font=("algerian","45","underline ")).place(x=440,y=20)
+        Label(main_screen, text="DASHBOARD", font=("algerian","45","underline "), bg="yellow").place(x=440,y=20)
         
         #images 
-        view_stock_img = PhotoImage(file="images/view_stock.png")
+        view_inventory_img = PhotoImage(file="images/view_inventory.png")
         add_product_img = PhotoImage(file="images/add_product.png")
         delete_img = PhotoImage(file="images/delete.png")
         search_img = PhotoImage(file="images/search.png")
         generate_bill_img = PhotoImage(file="images/generate_bill.png")
         add_user_img = PhotoImage(file="images/add_user.png")
 
-        button1 = Button(main_screen, text="VIEW STOCK", font=("arial","25"), image=view_stock_img, compound="right", width=400, command=view_stock)
+        button1 = Button(main_screen, text="VIEW INVENTORY", font=("arial","25"), image=view_inventory_img, compound="right", width=400, command=view_inventory)
         button1.place(x=120,y=150)
-        button1.image=view_stock_img
+        button1.image=view_inventory_img
     
         button2 = Button(main_screen,text="ADD PRODUCT", font=("arial","25"), image=add_product_img, compound="right", width=400, command=add_product)
         button2.place(x=700,y=150)
