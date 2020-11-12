@@ -1,5 +1,5 @@
 # store-management-system
-
+#click on raw before viewing 
 DATABASE NAME = project
 NAMES OF SQL TABLES AND THEIR STRUCTURES 
 
